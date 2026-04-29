@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Daily Report | The Osmanov Protocol</title>
+    <style>
+        :root {
+            --nyt-black: #121212;
+            --nyt-grey: #666666;
+            --nyt-accent: #1a5ca3; /* Изменен на синий, цвет "стального" спокойствия */
+            --bg-color: #fcfaf7;
+            --border-color: #dfdfdf;
+            --font-serif: 'Georgia', 'Times New Roman', serif;
+            --font-sans: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--nyt-black);
+            font-family: var(--font-serif);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 4px double var(--nyt-black);
+            padding: 20px 0 10px;
+            margin-bottom: 20px;
+        }
+
+        .site-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            margin: 0;
+            line-height: 0.9;
+        }
+
+        .sub-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--nyt-black);
+            margin-top: 10px;
+            padding: 5px 0;
+            font-weight: bold;
+        }
+
+        nav {
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 8px 0;
+            text-align: center;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        nav span { margin: 0 15px; cursor: pointer; transition: 0.3s; }
+        nav span:hover { color: var(--nyt-accent); }
+
+        .breaking-bar {
+            background: var(--nyt-accent);
+            color: white;
+            font-family: var(--font-sans);
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .article-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin: 10px 0;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--nyt-grey);
+            font-style: italic;
+        }
+
+        .meta-info {
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            color: var(--nyt-grey);
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            display: inline-block;
+            padding-top: 10px;
+        }
+
+        .hero-image-box {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .hero-image-box img {
+            width: 100%;
+            max-height: 700px;
+            object-fit: cover;
+            border: 1px solid #ccc;
+        }
+
+        .caption {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            color: var(--nyt-grey);
+            text-align: left;
+            margin-top: 8px;
+            border-left: 3px solid var(--nyt-accent);
+            padding-left: 10px;
+        }
+
+        .article-body {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.15rem;
+        }
+
+        .article-body p::first-letter {
+            float: left;
+            font-size: 4rem;
+            line-height: 1;
+            padding-right: 10px;
+            font-weight: bold;
+        }
+
+        .fact-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin: 40px 0;
+            box-shadow: 5px 5px 0px #eee;
+        }
+
+        .fact-box h3 {
+            text-transform: uppercase;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--nyt-accent);
+            margin-top: 0;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+        }
+
+        .btn-reveal {
+            display: block;
+            width: fit-content;
+            margin: 40px auto;
+            padding: 15px 40px;
+            background: var(--nyt-black);
+            color: white;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-reveal:hover {
+            transform: scale(1.05);
+            background: var(--nyt-accent);
+        }
+
+        #game-container {
+            background: #eee;
+            border: 2px dashed #ccc;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            margin: 40px 0;
+            display: none;
+        }
+
+        .problem-bubble {
+            position: absolute;
+            background: var(--nyt-accent);
+            color: white;
+            padding: 10px;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            user-select: none;
+            animation: float 4s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        #final-congrats {
+            text-align: center;
+            background: var(--nyt-black);
+            color: white;
+            padding: 60px 20px;
+            margin-top: 60px;
+            display: none;
+        }
+
+        #safety-popup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 5px solid var(--nyt-accent);
+            padding: 30px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            font-family: var(--font-sans);
+            width: 85%;
+            max-width: 450px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stamp {
+            color: var(--nyt-accent);
+            font-size: 5rem;
+            border: 10px solid var(--nyt-accent);
+            padding: 10px 30px;
+            transform: rotate(-15deg);
+            font-weight: 900;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .reliability-meter {
+            height: 10px; background: #ddd; width: 100%; margin-top: 10px;
+        }
+        .reliability-fill {
+            height: 100%; background: var(--nyt-accent); width: 0%; transition: width 2s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="safety-popup">
+        <h3 style="color:var(--nyt-accent)">ВНИМАНИЕ: ОБНАРУЖЕН BIG BOSS</h3>
+        <p>Сканирование мышечной массы... Проверка запасов конфеток... Анализ индекса авторитета...</p>
+        <div class="reliability-meter"><div class="reliability-fill" id="fill"></div></div>
+        <p id="meter-text">Анализ: 0%</p>
+        <button class="btn-reveal" onclick="closePopup()" style="margin-top:20px">Получить допуск в зал ПТО</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <p style="font-family:var(--font-sans); font-size:0.7rem; margin:0">"Steel muscles, sweet heart, perfect technical order"</p>
+            <h1 class="site-title">Global Daily Report</h1>
+            <div class="sub-header">
+                <span id="current-date"></span>
+                <span>BOSS SPECIAL EDITION</span>
+                <span>VOL. POWER ... No. 1</span>
+            </div>
+        </header>
+
+        <nav>
+            <span>Gym Secrets</span> | <span>Candy Analytics</span> | <span>Vitamin Guide</span> | <span>Department Zen</span> | <span style="color:var(--nyt-accent)">The Big Boss Files</span>
+        </nav>
+
+        <div class="breaking-bar">
+            <marquee scrollamount="5"><b>BREAKING NEWS:</b> Андрей Юрьевич официально признан самым накаченным звеном станции ... Весь ПТО переходит на режим "жим лежа" ... Секретная формула витаминов для роста КПД найдена ... Шоколадки в отделе приравнены к стратегическому топливу ... </marquee>
+        </div>
+
+        <article>
+            <div class="article-header">
+                <h1>The Iron Chief of PTO: Андрей Юрьевич — когда мощь производства встречается с мощью бицепса</h1>
+                <p class="subtitle">Спецрепортаж из спортзала и кабинета: как построить идеальный отдел на протеине и харизме.</p>
+                <div class="meta-info">
+                    Главное Управление ПТО | Обновлено: <span id="update-time"></span>
+                </div>
+            </div>
+
+            <div class="hero-image-box">
+                <img id="hero-img" src="1.jpeg" alt="Лицо ПТО">
+                <p class="caption">Лицо отдела: Когда уровень серьезности прямо пропорционален качеству техзадания.</p>
+            </div>
+
+            <div class="article-body">
+                <p>
+                    В мире производственно-технического отдела, где бумаги тяжелее металла, появился лидер, способный поднять и то, и другое. <b>Андрей Юрьевич Османов</b> — это не просто имя на табличке кабинета. Это бренд, олицетворяющий мощь, порядок и неожиданную любовь к сладенькому.
+                </p>
+                <p>
+                   Начальник производственно-технического отдела — должность, требующая стальных нервов и не менее стальных мышц. Османов Андрей Юрьевич воплощает в себе оба этих качества. В то время как обычные люди считают калории, он считает объемы выполненных работ, а затем сжигает их на вечерней тренировке. Его отдел работает как швейцарские часы, смазанные протеином и решительностью. Говорят, что если в ПТО случается аврал, начальник просто заходит в помещение, делает глубокий вдох, и все проблемы самоустраняются от страха перед таким объемом бицепса.
+                   Его рабочий день — это марафон между решением глобальных задач и подходом к штанге. Он — живое доказательство того, что настоящий батыр может разбираться в сложнейших схемах станции так же легко, как в сортах лучшего шоколада и кофе.
+                </p>
+
+                <div class="fact-box">
+                    <h3>ДОСЬЕ "BIG BOSS":</h3>
+                    <ul>
+                        <li><b>Силовой напор:</b> Количество подходов в зале прямо влияет на количество успешно закрытых отчетов. Зависимость линейная.</li>
+                        <li><b>Должность:</b> Главный по "железу" во всех смыслах.</li>
+                        <li><b>Слабость:</b> Сладкое. Но мы об этом молчим, потому что он всё равно сильнее всех нас вместе взятых.</li>
+                        <li><b>Статус Батыра:</b> Официально подтвержденный уровень мощи. Способен удержать станцию от развала даже во время отпуска.</li>
+                    </ul>
+                </div>
+
+                <p>
+                    Коллеги отмечают, что начальник ПТО — это не только ответственность и бесконечные совещания. В случае с Андреем Юрьевичем, это ещё и железная дисциплина в тренажерном зале. Поговаривают, что если в отделе заканчиваются запчасти, шеф просто идет в зал и выжимает пару тонн, пока решение не придет само собой.
+                </p>
+            </div>
+
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img id="g-img-1" src="2.jpeg" alt="Батыр">
+                    <p class="caption">Настоящий Батыр: Фотография за секунду до того, как Андрей Юрьевич одной рукой подписал приказ, а второй поднял штангу.</p>
+                </div>
+                <div class="gallery-item">
+                    <img id="g-img-2" src="3.jpeg" alt="Будущее">
+                    <p class="caption">Счастливое будущее: Взгляд направлен туда, где все планы выполнены, а протеин по акции.</p>
+                </div>
+            </div>
+
+            <button class="btn-reveal" onclick="revealTruth()">Увидеть Сверхсилу</button>
+
+            <div id="game-section" style="display:none; text-align:center;">
+                <hr>
+                <h2 style="font-family:var(--font-sans)">С Днём защитника Отечества, Андрей Юрьевич!</h2>
+                <p>Вы защищаете интересы нашего отдела так же мощно, как штурмуете веса в зале! <br>
+            Желаем, чтобы в жизни всё было по ГОСТу, в мышцах — драйв, а в кармане — всегда припасенная сладость для настроения.  Пусть ПТО процветает под вашим руководством, а личные рекорды в зале растут с каждым днем!</p>
+                <div id="game-container"></div>
+                <p id="game-status"></p>
+            </div>
+        </article>
+    </div>
+
+    <div id="final-congrats">
+        <h2 id="final-header">С ПРАЗДНИКОМ, АНДРЕЙ ЮРЬЕВИЧ!</h2>
+        <p style="font-size:1.5rem; max-width:850px; margin: 20px auto;">
+            Начальник, спортсмен, эксперт по витаминам и просто человек-скала. <br>
+            Пусть ПТО процветает под вашим руководством, а личные рекорды в зале растут с каждым днем! <br>
+            <b>Вы — наш главный силовой и технический ресурс!</b>
+        </p>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="stamp" id="stamp">SUPER CHIEF</div>
+    </div>
+
+    <script>
+        const now = new Date();
+        document.getElementById('current-date').innerText = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+        document.getElementById('update-time').innerText = now.toLocaleTimeString('ru-RU');
+
+        window.onload = () => {
+            let fill = document.getElementById('fill');
+            let text = document.getElementById('meter-text');
+            let width = 0;
+            let interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    text.innerText = "Анализ: 100% (Максимальный авторитет)";
+                } else {
+                    width += 2;
+                    fill.style.width = width + "%";
+                    text.innerText = "Анализ: " + width + "%";
+                }
+            }, 30);
+        };
+
+        function closePopup() { document.getElementById('safety-popup').style.display = 'none'; }
+
+        function revealTruth() {
+            const overlay = document.getElementById('overlay');
+            const stamp = document.getElementById('stamp');
+            overlay.style.display = 'flex';
+            setTimeout(() => stamp.style.opacity = '1', 100);
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                document.getElementById('game-section').style.display = 'block';
+                window.scrollTo({ top: document.getElementById('game-section').offsetTop, behavior: 'smooth' });
+                startGame();
+            }, 2000);
+        }
+
+        const problems = ["Скучный отчет", "Пропущенная тренировка", "Дефицит глюкозы", "Ошибка в схеме", "Нехватка витаминов", "Слишком легкая штанга"];
+        let solvedCount = 0;
+        const target = 6;
+
+        function startGame() {
+            const container = document.getElementById('game-container');
+            container.innerHTML = '';
+            solvedCount = 0;
+            spawnProblem();
+        }
+
+        function spawnProblem() {
+            if (solvedCount >= target) {
+                document.getElementById('game-status').innerHTML = "<b>Андрей Юрьевич взял вес! ПТО в безопасности, протеин выпит.</b>";
+                setTimeout(() => {
+                    document.getElementById('final-congrats').style.display = 'block';
+                    window.scrollTo({ top: document.getElementById('final-congrats').offsetTop, behavior: 'smooth' });
+                }, 1000);
+                return;
+            }
+            const prob = document.createElement('div');
+            prob.className = 'problem-bubble';
+            prob.innerText = problems[Math.floor(Math.random() * problems.length)];
+            prob.style.left = Math.random() * 80 + "%";
+            prob.style.top = Math.random() * 80 + "%";
+            prob.onclick = () => {
+                prob.style.background = "#2ecc71";
+                prob.innerText = "Османов решил!";
+                setTimeout(() => { prob.remove(); solvedCount++; spawnProblem(); }, 400);
+            };
+            document.getElementById('game-container').appendChild(prob);
+        }
+    </script>
+</body>
+</html>
